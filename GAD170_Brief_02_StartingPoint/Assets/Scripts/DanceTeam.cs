@@ -14,7 +14,7 @@ public class DanceTeam : MonoBehaviour
     const float DancerSpaceing = 2; // The distance between each dancer when they spawn in.
     public Color teamColor = Color.white; // Our team colours, we can change these in the inspectors.
     [SerializeField]
-    protected string danceTeamName; // this is set from our SetTroupeName Function.
+    public string danceTeamName; // this is set from our SetTroupeName Function.
     public Transform lineUpStart; // this is just a transform in our scene where we set the spawn position of our team.
     public GameObject fightWinContainer; // This is just a point light in our scene that gets turned on and off if we win just to make it look fancy.
     public Text troupeNameText; // this is just a text element in the scene that set by the troupe name function.
@@ -27,8 +27,10 @@ public class DanceTeam : MonoBehaviour
     /// <param name="dancer"></param>
     public void AddNewDancer(Character dancer)
     {
-        Debug.LogWarning("AddNewDancer called, it needs to put dancer in both lists and set the dancers team.");
-        // we probably want to add our new dancers to our all dancers and our active dancers lists here..
+               // we probably want to add our new dancers to our all dancers and our active dancers lists here..
+
+        allDancers.Add(dancer);
+        activeDancers.Add(dancer);
     }
 
     /// <summary>
@@ -37,9 +39,11 @@ public class DanceTeam : MonoBehaviour
     /// <param name="dancer"></param>
     public void RemoveFromActive(Character dancer)
     {
-        Debug.LogWarning("RemoveFromActive called, it needs to take the dancer out of the active dancers list");  
+        
         // This gets called when our team mate dies :(
         // We probably want to remove the dancer passed in from our active dancer list.
+        activeDancers.Remove(dancer);
+
     }
 
     /// <summary>

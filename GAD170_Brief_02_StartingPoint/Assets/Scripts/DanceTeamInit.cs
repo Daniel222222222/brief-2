@@ -26,7 +26,14 @@ public class DanceTeamInit : MonoBehaviour
         // We need to set out team names using teamA.SetTroupeName.
         // We need to generate some character names for our teams to use from our CharacterNameGenerator.
         // We need to spawn in some dancers using teamA.InitialiseTeamFromNames.
+        teamACharacterNames = nameGenerator.GenerateNames(dancersPerSide);
+        teamBcharacterNames = nameGenerator.GenerateNames(dancersPerSide);
 
+        teamA.SetTroupeName("Raw");
+        teamB.SetTroupeName("Smackdown");
+
+        teamA.InitaliseTeamFromNames(dancerPrefab, DanceTeam.Direction.Left, teamACharacterNames);
+        teamB.InitaliseTeamFromNames(dancerPrefab, DanceTeam.Direction.Right, teamBcharacterNames);
 
         Debug.LogWarning("InitTeams called, needs to create character names via CharacterNameGenerator and get them into the team.InitaliseTeamFromNames");
     }

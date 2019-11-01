@@ -20,6 +20,7 @@ public class Character : MonoBehaviour
 
     public int level; // This is optional if you want to expand on this to level up your characters and stuff welcome to.
     public int currentXP; // This is optional as well if you want to expand on this brief to assign xp etc!
+    public int xpThreshold = 20;
     public int style, luck, rhythm; 
 
 
@@ -46,6 +47,17 @@ public class Character : MonoBehaviour
     private void InitialStats()
     {
         Debug.LogWarning("InitialStats called, needs to distribute points into stats. This should be able to be ported from previous brief work");
+
+        style = Random.Range(1, availablePoints);
+        availablePoints -= style;
+        luck = Random.Range(1, availablePoints);
+        availablePoints = availablePoints - luck;
+        rhythm = availablePoints;
+        availablePoints = availablePoints - rhythm;
+
+        // Duck punching goes here ^
+
+        Debug.Log("style" + style + "\n" + "luck" + luck + "\n" + "rhythm" + rhythm);
         // We probably want to set out default level and some default random stats 
         // for our luck, style and rythmn.
     }
@@ -56,6 +68,13 @@ public class Character : MonoBehaviour
     /// </summary>
     public void DealDamage(float amount)
     {
+        mojoRemaining -= amount;
+
+        if (mojoRemaining <= 0)
+            {
+            myTeam.RemoveFromActive(this);
+        }
+        
         // we probably want to do a check in here to see if the character is dead or not...
         // if they are we probably want to remove them from their team's active dancer list...sure wish there was a function in their dance team  script we could use for this.
     }
@@ -70,7 +89,8 @@ public class Character : MonoBehaviour
         // to ensure that there is not always a draw, by default it just returns 0. 
         // If you right click this function and find all references you can see where it is called.
         Debug.LogWarning("ReturnBattlePoints has been called we probably want to create some battle points based on our stats");
-        return 0;
+        int ReturnBattlePoints = (1 + style + luck + (rhythm * 2));
+        return ReturnBattlePoints;
     }
 
     /// <summary>
@@ -78,10 +98,16 @@ public class Character : MonoBehaviour
     /// Takes in and store in BattleOutcome from the BattleHandler script which is how much the player has won by.
     /// By Default it is set to 100% victory.
     /// </summary>
-    public void CalculateXP(float BattleOutcome)
+    public void CalculateXP(float outcome)
     {
-        Debug.LogWarning("This character needs some xp to be given, the outcome of the fight was: " + BattleOutcome);
+        Debug.LogWarning("This character needs some xp to be given, the outcome of the fight was: " + outcome);
         // The result of the battle is coming in which is stored in BattleOutcome .... we probably want to do something with it to calculate XP.
+        currentXP += (int)(20 * outcome);
+        if (currentXP >= xpThreshold)
+        {
+
+            LevelUp();
+        }
 
         // We probably also want to check to see if the player can level up and if so do something....
     }
@@ -91,8 +117,13 @@ public class Character : MonoBehaviour
     /// </summary>
     private void LevelUp()
     {
+        xpThreshold = 20 * level;
+
+        level += 1;
+
+        AssignSkillPointsOnLevelUp(10);
         //We probably want to increase the player level, the xp threshold and increase our current skill points based on our level.
-        Debug.LogWarning("Level up has been called");
+            Debug.LogWarning("Level up has been called");
     }
 
     /// <summary>
@@ -100,7 +131,23 @@ public class Character : MonoBehaviour
     /// </summary>
     public void AssignSkillPointsOnLevelUp(int PointsToAssign)
     {
+      
+        int myTempint = Random.Range(1, PointsToAssign);
+
         Debug.LogWarning("AssignSkillPointsOnLevelUp has been called " + PointsToAssign);
+
+        style += myTempint;
+        PointsToAssign -= myTempint;
+
+        myTempint = Random.Range(1, PointsToAssign);
+        luck += myTempint;
+        PointsToAssign = PointsToAssign - myTempint;
+
+        myTempint = Random.Range(1, PointsToAssign);
+        rhythm += myTempint;
+        PointsToAssign = PointsToAssign - myTempint;
+
+        Debug.Log("style" + style + "\n" + "luck" + luck + "\n" + "rhythm" + rhythm);
 
         // We are taking an amount of points to assign in, and we want to assign it to our luck, style and rhythm, we 
         // want some random amount of points added to our current values.

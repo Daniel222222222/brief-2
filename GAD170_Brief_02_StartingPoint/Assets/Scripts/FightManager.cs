@@ -11,6 +11,7 @@ public class FightManager : MonoBehaviour
     public BattleSystem battleSystem; //A reference to our battleSystem script in our scene
     public Color drawCol = Color.gray; // A colour you might want to set the battle log message to if it's a draw.
     private float fightAnimTime = 2; //An amount to wait between initiating the fight, and the fight begining, so we can see some of that sick dancing.
+    public Character character;
 
     //TODO this function is all you need to modify, in this script.
     //You just need determine who wins/loses/draws etc.
@@ -31,11 +32,35 @@ public class FightManager : MonoBehaviour
         int teamABattlePoints = teamACharacter.ReturnBattlePoints();
         int teamBBattlePoints = teamBCharacter.ReturnBattlePoints();
 
-        // We need to do some logic hear to check who wins based on the battle points, we want to handle team A winning, team B winning and draw scenarios.
-        winner = teamACharacter;
-        defeated = teamBCharacter;
-        outcome = 0;
-        BattleLog.Log("Fight is a draw!", drawCol);
+        
+        if (teamABattlePoints <= 0 || teamBBattlePoints <= 0)
+        {
+            Debug.LogWarning("Player or NPC battle points is 0, most likely the logic has not be setup for this yet");
+        }
+        Debug.Log(teamABattlePoints);
+        Debug.Log(teamBBattlePoints);
+        if (teamABattlePoints > teamBBattlePoints)
+        {
+            outcome = 1 - ((float)teamBBattlePoints / (float)teamABattlePoints);
+            Debug.Log("raw wins");
+            winner = teamACharacter;
+            defeated = teamBCharacter;
+            BattleLog.Log("Raw wins!", winner.myTeam.teamColor);
+
+        }
+        else if (teamABattlePoints < teamBBattlePoints)
+        {
+            outcome = 1 - ((float)teamBBattlePoints / (float)teamABattlePoints);
+            Debug.Log("smackdown wins");
+            defeated = teamACharacter;
+            BattleLog.Log("Smackdown wins!", winner.myTeam.teamColor);
+
+        }
+        else
+            {
+            BattleLog.Log("Fight is a draw!", drawCol);
+        }
+        
 
         Debug.LogWarning("Attack called, may want to use the BattleLog.Log() to report the dancers and the outcome of their dance off.");
 

@@ -11,7 +11,7 @@ public class BattleSystem : MonoBehaviour
 {
     public DanceTeam teamA,teamB; //References to TeamA and TeamB
     public FightManager fightManager; // References to our FightManager.
-
+    public Character character;
     public float battlePrepTime = 2;  // the amount of time we need to wait before a battle starts
     public float fightCompletedWaitTime = 2; // the amount of time we need to wait till a fight/round is completed.
     
@@ -38,18 +38,30 @@ public class BattleSystem : MonoBehaviour
             //You need to select two random or engineered random characters to fight...so one from team a and one from team b....
             //We then need to pass in the two selected dancers into fightManager.Fight(CharacterA,CharacterB);
             //fightManager.Fight(charA, charB);
+            Character characterA = teamA.activeDancers[Random.Range(0, teamA.activeDancers.Count)];
+            Character characterB = teamB.activeDancers[Random.Range(0, teamB.activeDancers.Count)];
+            fightManager.Fight(characterA, characterB);
+
         }
         else
         {
-            // IF we get to here...then we have a team has won...winner winner chicken dinner.
-            DanceTeam winner = null; // null is the same as saying nothing...often seen as a null reference in your logs.
+            // IF we get to here...then we have a team has won...winner winner chicken dinner
 
             // We need to determine a winner...but how?...maybe look at the previous if statements for clues?
-          
+            if(teamA.activeDancers.Count > 0 && teamB.activeDancers.Count == 0)
+            {
+                teamA.EnableWinEffects();
+                BattleLog.Log(teamA.danceTeamName, teamA.teamColor);
+            }
 
-            //Enables the win effects, and logs it out to the console.
-            winner.EnableWinEffects();
-            BattleLog.Log(winner.ToString(), winner.teamColor);
+            else if (teamB.activeDancers.Count > 0 && teamA.activeDancers.Count == 0)
+            {
+                teamB.EnableWinEffects();
+                BattleLog.Log(teamB.danceTeamName, teamB.teamColor);
+            }
+
+            
+            
 
             Debug.Log("DoRound called, but we have a winner so Game Over");
           
@@ -61,7 +73,17 @@ public class BattleSystem : MonoBehaviour
     {
         Debug.LogWarning("FightOver called, may need to check for winners and/or notify teams of zero mojo dancers");   
         // assign damage...or if you want to restore health if they want that's up to you....might involve the character script.
-
+        if(outcome == 0)
+        {
+            winner.CalculateXP(outcome);
+            defeated.CalculateXP(outcome);
+        }
+        
+        else
+        {
+            defeated.DealDamage(outcome);
+            winner.CalculateXP(outcome);
+        }
         //calling the coroutine so we can put waits in for anims to play
         StartCoroutine(HandleFightOver());
     }
